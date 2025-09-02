@@ -425,32 +425,34 @@
 <body class="overflow-x-hidden">
 
     <!-- HEADER -->
-    <header id="main-header" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 flex items-center">
-        <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-            <a href="#hero" class="flex items-center space-x-2 text-xl font-black">
-                <div class="w-12 h-12 rounded-lg bg-battle-red/10 flex items-center justify-center border border-battle-red/20">
-                    <span class="text-battle-red font-bold text-lg">CSI</span>
-                </div>
-                <span class="text-white font-orbitron tracking-wider hidden md:block">
-                    COMPUTER SOCIETY OF INDIA
-                </span>
-            </a>
+<header id="main-header" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 flex items-center">
+    <div class="container mx-auto px-0 md:px-6 py-4 flex justify-between items-center">
+        <a href="#hero" class="flex items-center space-x-4 text-xl font-black">
+            
+            <img src="assets/images/csi-logo.png" alt="CSI Logo" class="h-16 w-auto hidden md:block">
 
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="#hero" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Home</a>
-                <a href="#about" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">About</a>
-                <a href="#rounds" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Rounds</a>
-                <a href="#prizes" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Prizes</a>
-                <a href="#schedule" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Schedule</a>
-                <a href="#faq" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">FAQ</a>
-                <a href="#contact" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Contact</a>
-            </nav>
+            <img src="assets/images/csi-logo2.webp" alt="CSI Logo Mobile" class="h-16 w-auto md:hidden">
+            
+            <span class="text-white font-orbitron tracking-wider hidden md:block">
+                COMPUTER SOCIETY OF INDIA
+            </span>
+        </a>
 
-            <button id="nav-toggle" class="md:hidden text-gray-300 hover:text-white transition-colors duration-300 text-2xl focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </header>
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="#hero" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Home</a>
+            <a href="#about" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">About</a>
+            <a href="#rounds" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Rounds</a>
+            <a href="#prizes" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Prizes</a>
+            <a href="#schedule" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Schedule</a>
+            <a href="#faq" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">FAQ</a>
+            <a href="#contact" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Contact</a>
+        </nav>
+
+        <button id="nav-toggle" class="md:hidden text-gray-300 hover:text-white transition-colors duration-300 text-2xl focus:outline-none mr-4 md:mr-0">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
     
     <!-- MOBILE MENU -->
     <div id="nav-menu" class="fixed top-0 right-0 w-full h-full bg-gray-900 bg-opacity-95 z-40 transform translate-x-full transition-transform duration-300 md:hidden flex items-center justify-center">
