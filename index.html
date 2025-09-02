@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgoWars - The Battle of Ideas | CSI CUSB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'battle-red': '#ff2a2a',
+                        'battle-orange': '#ff7700',
+                        'battle-yellow': '#ffcc00',
+                        'dark-bg': '#0f0a15',
+                        'mid-bg': '#1a1025',
+                        'light-bg': '#251a35',
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'rajdhani': ['Rajdhani', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --primary-red: #ff2a2a;
+            --primary-orange: #ff7700;
+            --primary-yellow: #ffcc00;
+            --dark-bg: #0f0a15;
+            --mid-bg: #1a1025;
+            --light-bg: #251a35;
+            --text-color: #f9f0ff;
+            --text-muted: #d0b4de;
+            --accent-glow: 0 0 15px rgba(255, 42, 42, 0.7), 0 0 30px rgba(255, 119, 0, 0.5);
+            --card-glow: 0 4px 30px rgba(255, 42, 42, 0.15);
+            --nav-height: 80px;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.03) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 119, 0, 0.03) 0%, transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(255, 204, 0, 0.03) 0%, transparent 25%);
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        /* Particle Network Background */
+        #hero-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        /* Animation System */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 0 rgba(255, 42, 42, 0.4), 0 0 0 rgba(255, 119, 0, 0.4); 
+            }
+            50% { 
+                transform: scale(1.05); 
+                box-shadow: 0 0 20px rgba(255, 42, 42, 0.8), 0 0 40px rgba(255, 119, 0, 0.6); 
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .animate-fadeIn { animation: fadeIn 1s ease-out forwards; }
+        .animate-fadeInUp { animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-fadeInLeft { animation: fadeInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-fadeInRight { animation: fadeInRight 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        .animate-delay-400 { animation-delay: 0.4s; }
+        .animate-delay-500 { animation-delay: 0.5s; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-text-shine { 
+            animation: textShine 3s linear infinite;
+            background: linear-gradient(
+                90deg,
+                #FF2A2A,
+                #FF7700,
+                #FFCC00,
+                #FF7700,
+                #FF2A2A
+            );
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scroll-triggered Animations */
+        .scroll-fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .scroll-fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Button System */
+        .btn-primary {
+            background-image: linear-gradient(135deg, var(--primary-red), var(--primary-orange));
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--card-glow);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            z-index: 1;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(255, 42, 42, 0.3), 0 15px 30px rgba(255, 119, 0, 0.2);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-red));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary-red);
+            color: var(--primary-red);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        .btn-outline:hover {
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--primary-red);
+        }
+        .btn-outline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-red);
+            z-index: -1;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-outline:hover::before {
+            left: 0;
+        }
+
+        /* Card System */
+        .card {
+            background: linear-gradient(145deg, var(--mid-bg), var(--light-bg));
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            box-shadow: var(--card-glow);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-orange));
+            z-index: 2;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px) rotateX(5deg) rotateY(2deg) scale(1.02);
+            box-shadow: 0 15px 40px rgba(255, 42, 42, 0.25);
+            border-color: rgba(255, 42, 42, 0.3);
+        }
+
+        /* FAQ Accordion */
+        .accordion-item {
+            border-bottom: 1px solid rgba(255, 42, 42, 0.2);
+            transition: all 0.3s ease;
+        }
+        .accordion-header {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 1.25rem 0;
+        }
+        .accordion-header:hover {
+            color: var(--primary-red);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        padding 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .accordion-content.is-open {
+            max-height: 500px;
+            padding-bottom: 1.5rem;
+        }
+        .rotate-45 {
+            transform: rotate(45deg);
+        }
+
+        .pulse-animation {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        /* Layout System */
+        .section {
+            padding: 6rem 1rem;
+            position: relative;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 3rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-orange));
+            border-radius: 2px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .section {
+                padding: 4rem 1rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+            }
+            
+            #countdown {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 300px;
+            }
+        }
+
+        /* Special Effects */
+        .text-gradient {
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 10px rgba(255, 42, 42, 0.7);
+        }
+        
+        .hover-glow:hover {
+            box-shadow: var(--accent-glow);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Navigation */
+        #main-header {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(15, 10, 21, 0.8);
+            height: var(--nav-height);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 30px rgba(255, 42, 42, 0.15);
+            border-bottom: 1px solid rgba(255, 42, 42, 0.1);
+        }
+        
+        #main-header.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            background-color: rgba(15, 10, 21, 0.95);
+        }
+        
+        /* Mobile Menu */
+        #nav-menu {
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Countdown */
+        .countdown-item {
+            background: rgba(255, 42, 42, 0.1);
+            border: 1px solid rgba(255, 42, 42, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 12px;
+        }
+        
+        /* Event Cards */
+        .event-card-1 {
+            border-top: 4px solid var(--primary-red);
+        }
+        
+        .event-card-2 {
+            border-top: 4px solid var(--primary-orange);
+        }
+        
+        /* Hero Section */
+        .hero-content {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Battle-themed elements */
+        .battle-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 42, 42, 0.1);
+            border: 2px solid var(--primary-red);
+            margin-bottom: 1rem;
+        }
+
+        .hex-pattern {
+            background-image: 
+                linear-gradient(rgba(255, 42, 42, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 42, 42, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- HEADER -->
+    <header id="main-header" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 flex items-center">
+        <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
+            <a href="#hero" class="flex items-center space-x-2 text-xl font-black">
+                <div class="w-12 h-12 rounded-lg bg-battle-red/10 flex items-center justify-center border border-battle-red/20">
+                    <span class="text-battle-red font-bold text-lg">CSI</span>
+                </div>
+                <span class="text-white font-orbitron tracking-wider hidden md:block">
+                    COMPUTER SOCIETY OF INDIA
+                </span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#hero" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Home</a>
+                <a href="#about" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">About</a>
+                <a href="#rounds" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Rounds</a>
+                <a href="#prizes" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Prizes</a>
+                <a href="#schedule" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Schedule</a>
+                <a href="#faq" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">FAQ</a>
+                <a href="#contact" class="text-gray-300 hover:text-white transition-colors duration-300 font-medium hover-glow font-orbitron">Contact</a>
+            </nav>
+
+            <button id="nav-toggle" class="md:hidden text-gray-300 hover:text-white transition-colors duration-300 text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    
+    <!-- MOBILE MENU -->
+    <div id="nav-menu" class="fixed top-0 right-0 w-full h-full bg-gray-900 bg-opacity-95 z-40 transform translate-x-full transition-transform duration-300 md:hidden flex items-center justify-center">
+        <div class="p-8 space-y-8 text-center">
+            <button id="close-menu" class="absolute top-6 right-6 text-gray-300 hover:text-white text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="#hero" class="block text-2xl text-gray-300 hover:text-white font-semibold transition-colors duration-300 hover-glow font-orbitron" onclick="closeMenu()">Home</a>
+            <a href="#about" class="block text-2xl text-gray-300 hover:text-white font-semibold transition-colors duration-300 hover-glow font-orbitron" onclick="closeMenu()">About</a>
+            <a href="#rounds" class="block text-2xl text-gray-300 hover:text-white font-semibold transition-colors duration-300 hover-glow font-orbitron" onclick="closeMenu()">Rounds</a>
+            <a href="#prizes" class="block text-2xl text-gray-300 hover:text-white font-semibold transition-colors duration-300 hover-glow font-orbitron" onclick="closeMenu()">Prizes</a>
+            <a href="#schedule" class="block text-2xl text-gray-300 hover:text-white font-semibold transition-colors duration-300 hover-glow font-orbitron" onclick="closeMenu()">Schedule</a>
+            <a href="#faq" class="block text-2xl text-gray-300 hover:text-white font-semibold transition-colors duration-300 hover-glow font-orbitron" onclick="closeMenu()">FAQ</a>
+            <a href="#contact" class="block text-2xl text-gray-300 hover:text-white font-semibold transition-colors duration-300 hover-glow font-orbitron" onclick="closeMenu()">Contact</a>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center text-center px-4" style="padding-top: calc(var(--nav-height) + 2rem);">
+        <canvas id="hero-canvas"></canvas>
+        
+        <!-- Floating decorative elements -->
+        <div class="absolute top-20 left-10 w-8 h-8 rounded-full bg-battle-red opacity-20 animate-float hidden md:block"></div>
+        <div class="absolute bottom-1/4 right-20 w-12 h-12 rounded-full bg-battle-orange opacity-15 animate-float animate-delay-200 hidden md:block"></div>
+        <div class="absolute top-1/3 right-1/4 w-6 h-6 rounded-full bg-battle-yellow opacity-15 animate-float animate-delay-300 hidden md:block"></div>
+        
+        <div class="relative z-10 max-w-6xl px-4 hero-content">
+            <div class="mb-8">
+                <span class="inline-block px-4 py-2 bg-battle-red/10 text-battle-red rounded-full font-orbitron text-sm mb-4 border border-battle-red/20">
+                    BATTLE OF IDEAS
+                </span>
+                <h1 class="text-5xl sm:text-7xl md:text-8xl font-black leading-tight mb-6 animate-fadeInUp font-orbitron">
+                    <span class="animate-text-shine">ALGOWARS</span>
+                </h1>
+                <p class="text-xl sm:text-2xl md:text-3xl text-gray-300 max-w-3xl mx-auto mb-10 animate-fadeInUp animate-delay-100 font-orbitron">
+                    THE ULTIMATE <span class="text-battle-red">IDEATION</span> BATTLE
+                </p>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-10 animate-fadeInUp animate-delay-200">
+                    A two-round ideathon where innovation meets implementation. Unleash your creativity, develop solutions, and pitch your ideas to win exciting prizes!
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4 animate-fadeInUp animate-delay-300 mb-16">
+                <a href="https://forms.gle/Qy4NqJNYLgA1aew48" target="_blank" class="btn-primary px-8 py-4 font-bold text-lg rounded-full inline-flex items-center justify-center pulse-animation">
+                    <i class="fas fa-fist-raised mr-3"></i>JOIN THE BATTLE
+                </a>
+                <a href="#about" class="btn-outline px-8 py-4 font-bold text-lg rounded-full inline-flex items-center justify-center">
+                    <i class="fas fa-scroll mr-3"></i>LEARN MORE
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto scroll-fade-in mb-12">
+                <div class="flex flex-col items-center p-4">
+                    <div class="text-3xl font-bold text-battle-red mb-2">2</div>
+                    <div class="text-sm text-gray-400">ROUNDS</div>
+                </div>
+                <div class="flex flex-col items-center p-4">
+                    <div class="text-3xl font-bold text-battle-orange mb-2">2-3</div>
+                    <div class="text-sm text-gray-400">TEAM SIZE</div>
+                </div>
+                <div class="flex flex-col items-center p-4">
+                    <div class="text-3xl font-bold text-battle-yellow mb-2">10</div>
+                    <div class="text-sm text-gray-400">FINALISTS</div>
+                </div>
+                <div class="flex flex-col items-center p-4">
+                    <div class="text-3xl font-bold text-battle-red mb-2">3</div>
+                    <div class="text-sm text-gray-400">PRIZES</div>
+                </div>
+            </div>
+
+            <div id="countdown" class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-lg mx-auto scroll-fade-in">
+                <div class="countdown-item p-4 rounded-lg shadow-xl animate-fadeInUp animate-delay-300 transition-all duration-300 hover:bg-battle-red/10">
+                    <div id="days" class="text-3xl sm:text-4xl font-extrabold text-battle-red">00</div>
+                    <div class="text-sm text-gray-400 mt-1">DAYS</div>
+                </div>
+                <div class="countdown-item p-4 rounded-lg shadow-xl animate-fadeInUp animate-delay-400 transition-all duration-300 hover:bg-battle-orange/10">
+                    <div id="hours" class="text-3xl sm:text-4xl font-extrabold text-battle-orange">00</div>
+                    <div class="text-sm text-gray-400 mt-1">HOURS</div>
+                </div>
+                <div class="countdown-item p-4 rounded-lg shadow-xl animate-fadeInUp animate-delay-500 transition-all duration-300 hover:bg-battle-yellow/10">
+                    <div id="minutes" class="text-3xl sm:text-4xl font-extrabold text-battle-yellow">00</div>
+                    <div class="text-sm text-gray-400 mt-1">MINUTES</div>
+                </div>
+                <div class="countdown-item p-4 rounded-lg shadow-xl animate-fadeInUp animate-delay-600 transition-all duration-300 hover:bg-battle-red/10">
+                    <div id="seconds" class="text-3xl sm:text-4xl font-extrabold text-battle-red">00</div>
+                    <div class="text-sm text-gray-400 mt-1">SECONDS</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section bg-dark-bg hex-pattern">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title text-3xl sm:text-4xl font-extrabold scroll-fade-in font-orbitron">
+                THE BATTLEFIELD
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-400 max-w-4xl mx-auto mb-12 scroll-fade-in animate-delay-100">
+                ALGOWAR – The Battle of Ideas is an exciting two-round ideathon aimed at fostering creativity and innovation among participants. 
+                Transform your ideas into impactful solutions and showcase your talent and problem-solving skills.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="card scroll-fade-in card-hover p-8 text-center">
+                    <div class="battle-icon mx-auto">
+                        <i class="fas fa-lightbulb text-battle-red text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 font-orbitron">IDEATION</h3>
+                    <p class="text-gray-400">
+                        Teams will be given problem statements to develop innovative ideas or prototypes. Evaluators will assess based on creativity, feasibility, and technical execution.
+                    </p>
+                </div>
+                
+                <div class="card scroll-fade-in animate-delay-100 card-hover p-8 text-center">
+                    <div class="battle-icon mx-auto">
+                        <i class="fas fa-microphone text-battle-orange text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 font-orbitron">PRESENTATION</h3>
+                    <p class="text-gray-400">
+                        Top 10 teams will present their ideas through PPTs before a panel of expert jury members. Winners will be honored with awards and recognition.
+                    </p>
+                </div>
+                
+                <div class="card scroll-fade-in animate-delay-200 card-hover p-8 text-center">
+                    <div class="battle-icon mx-auto">
+                        <i class="fas fa-trophy text-battle-yellow text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 font-orbitron">VICTORY</h3>
+                    <p class="text-gray-400">
+                        Compete for amazing rewards and recognition from CSI and industry partners. Showcase your talent and win the ultimate battle of ideas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROUNDS SECTION -->
+    <section id="rounds" class="section bg-mid-bg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cGF0aCBkPSJNNDUgMTVIMTVWNDVINDBWMTVaTTE1IDE1TDMwIDMwTDE1IDQ1VjE1Wk00NSAxNUwzMCAzMEw0NSA0NVYxNVoiIHN0cm9rZT0iI2ZmMmEyYSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+')]"></div>
+        </div>
+        <div class="container mx-auto text-center relative z-10">
+            <h2 class="section-title text-3xl sm:text-4xl font-extrabold scroll-fade-in font-orbitron">
+                BATTLE ROUNDS
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-12 scroll-fade-in animate-delay-100">
+                Two intense rounds to test your innovation and presentation skills
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- Round 1 Card -->
+                <div class="card event-card-1 scroll-fade-in card-hover p-8 text-left">
+                    <div class="flex flex-col h-full">
+                        <span class="inline-block bg-battle-red text-white text-sm font-semibold py-1 px-4 rounded-full mb-4 self-start font-orbitron">
+                            ROUND 1
+                        </span>
+                        <h3 class="text-2xl font-bold mb-4 text-battle-red font-orbitron">IDEATION & PROTOTYPING</h3>
+                        <div class="mb-6 text-gray-300">
+                            <p class="mb-4 flex items-start"><span class="text-battle-red mr-2">⚡</span> Teams receive problem statements and develop innovative solutions</p>
+                            <p class="mb-4 flex items-start"><span class="text-battle-red mr-2">⚡</span> Create prototypes or detailed implementation plans</p>
+                            <p class="mb-4 flex items-start"><span class="text-battle-red mr-2">⚡</span> Mentors will be available for guidance</p>
+                            <p class="font-semibold text-battle-red mt-6 flex items-center"><i class="fas fa-laptop-code mr-2"></i> LAPTOPS MANDATORY</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Round 2 Card -->
+                <div class="card event-card-2 scroll-fade-in animate-delay-100 card-hover p-8 text-left">
+                    <div class="flex flex-col h-full">
+                        <span class="inline-block bg-battle-orange text-white text-sm font-semibold py-1 px-4 rounded-full mb-4 self-start font-orbitron">
+                            ROUND 2
+                        </span>
+                        <h3 class="text-2xl font-bold mb-4 text-battle-orange font-orbitron">IDEA PITCHING</h3>
+                        <div class="mb-6 text-gray-300">
+                            <p class="mb-4 flex items-start"><span class="text-battle-orange mr-2">⚡</span> Top 10 teams present their solutions to expert judges</p>
+                            <p class="mb-4 flex items-start"><span class="text-battle-orange mr-2">⚡</span> Create compelling PowerPoint presentations</p>
+                            <p class="mb-4 flex items-start"><span class="text-battle-orange mr-2">⚡</span> Evaluation based on innovation, feasibility, and presentation skills</p>
+                            <p class="font-semibold text-battle-orange mt-6 flex items-center"><i class="fas fa-trophy mr-2"></i> COMPETE FOR VICTORY</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRIZES SECTION -->
+    <section id="prizes" class="section bg-dark-bg">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title text-3xl sm:text-4xl font-extrabold scroll-fade-in font-orbitron">
+                BATTLE REWARDS
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-12 scroll-fade-in animate-delay-100">
+                Win amazing rewards and recognition for your innovative ideas
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="card scroll-fade-in card-hover p-8 text-center relative overflow-hidden">
+                    <div class="absolute top-4 right-4 text-battle-yellow text-4xl opacity-20">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="text-5xl text-battle-yellow mb-6">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 font-orbitron">1ST POSITION</h3>
+                    <p class="text-gray-400 mb-4">Trophy + Gold Medals</p>
+                    <p class="text-gray-400">Certificate of Excellence</p>
+                </div>
+                
+                <div class="card scroll-fade-in animate-delay-100 card-hover p-8 text-center relative overflow-hidden">
+                    <div class="absolute top-4 right-4 text-gray-300 text-4xl opacity-20">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="text-5xl text-gray-300 mb-6">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 font-orbitron">2ND POSITION</h3>
+                    <p class="text-gray-400 mb-4">Trophy + Silver Medals</p>
+                    <p class="text-gray-400">Certificate of Excellence</p>
+                </div>
+                
+                <div class="card scroll-fade-in animate-delay-200 card-hover p-8 text-center relative overflow-hidden">
+                    <div class="absolute top-4 right-4 text-amber-600 text-4xl opacity-20">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="text-5xl text-amber-600 mb-6">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 font-orbitron">3RD POSITION</h3>
+                    <p class="text-gray-400 mb-4">Trophy + Bronze Medals</p>
+                    <p class="text-gray-400">Certificate of Excellence</p>
+                </div>
+            </div>
+            
+            <div class="mt-12 scroll-fade-in animate-delay-300">
+                <p class="text-lg text-gray-300">
+                    <i class="fas fa-certificate text-battle-red mr-2"></i> All participants will receive certificates of participation!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCHEDULE SECTION -->
+    <section id="schedule" class="section bg-mid-bg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cGF0aCBkPSJNMzAgMTVMMTUgMzBMMzAgNDVWMTVaTTQ1IDMwTDMwIDQ1SDQ1VjMwWk0zMCAxNUw0NSAzMFYxNUgzMFoiIHN0cm9rZT0iI2ZmMmEyYSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+')]"></div>
+        </div>
+        <div class="container mx-auto text-center relative z-10">
+            <h2 class="section-title text-3xl sm:text-4xl font-extrabold mb-12 scroll-fade-in font-orbitron">
+                BATTLE TIMELINE
+            </h2>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="flex flex-col md:flex-row items-stretch mb-8 scroll-fade-in">
+                    <div class="md:w-1/3 flex items-center md:justify-end p-4">
+                        <div class="w-16 h-16 rounded-full bg-battle-red/20 flex items-center justify-center text-battle-red text-xl mr-4 border-2 border-battle-red/30">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="md:text-right">
+                            <h3 class="font-bold text-lg font-orbitron">09:30 AM</h3>
+                            <p class="text-gray-400">Registration</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center justify-center px-4 relative">
+                        <div class="w-1 h-16 bg-battle-red/30"></div>
+                    </div>
+                    <div class="md:w-2/3"></div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-stretch mb-8 scroll-fade-in animate-delay-100">
+                    <div class="md:w-1/3"></div>
+                    <div class="hidden md:flex items-center justify-center px-4 relative">
+                        <div class="w-1 h-16 bg-battle-orange/30"></div>
+                    </div>
+                    <div class="md:w-2/3 flex items-center p-4">
+                        <div class="w-16 h-16 rounded-full bg-battle-orange/20 flex items-center justify-center text-battle-orange text-xl mr-4 border-2 border-battle-orange/30">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg font-orbitron">10:00 AM</h3>
+                            <p class="text-gray-400">Welcome & Introduction</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-stretch mb-8 scroll-fade-in animate-delay-200">
+                    <div class="md:w-1/3 flex items-center md:justify-end p-4">
+                        <div class="w-16 h-16 rounded-full bg-battle-yellow/20 flex items-center justify-center text-battle-yellow text-xl mr-4 border-2 border-battle-yellow/30">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="md:text-right">
+                            <h3 class="font-bold text-lg font-orbitron">10:30 AM</h3>
+                            <p class="text-gray-400">Ideation Round Begins</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center justify-center px-4 relative">
+                        <div class="w-1 h-16 bg-battle-yellow/30"></div>
+                    </div>
+                    <div class="md:w-2/3"></div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-stretch mb-8 scroll-fade-in animate-delay-300">
+                    <div class="md:w-1/3"></div>
+                    <div class="hidden md:flex items-center justify-center px-4 relative">
+                        <div class="w-1 h-16 bg-battle-red/30"></div>
+                    </div>
+                    <div class="md:w-2/3 flex items-center p-4">
+                        <div class="w-16 h-16 rounded-full bg-battle-red/20 flex items-center justify-center text-battle-red text-xl mr-4 border-2 border-battle-red/30">
+                            <i class="fas fa-presentation"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg font-orbitron">12:15 AM</h3>
+                            <p class="text-gray-400">Pitching Round Begins</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-stretch scroll-fade-in animate-delay-400">
+                    <div class="md:w-1/3 flex items-center md:justify-end p-4">
+                        <div class="w-16 h-16 rounded-full bg-battle-orange/20 flex items-center justify-center text-battle-orange text-xl mr-4 border-2 border-battle-orange/30">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="md:text-right">
+                            <h3 class="font-bold text-lg font-orbitron">01:50 PM</h3>
+                            <p class="text-gray-400">Results & Prize Distribution</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center justify-center px-4 relative">
+                        <div class="w-1 h-16 bg-battle-orange/30"></div>
+                    </div>
+                    <div class="md:w-2/3"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REGISTRATION SECTION -->
+    <section id="registration" class="section bg-dark-bg">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title text-3xl sm:text-4xl font-extrabold scroll-fade-in font-orbitron">
+                JOIN THE BATTLE
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-8 scroll-fade-in animate-delay-100">
+                Form your team of 2-3 members and register for the battle of ideas
+            </p>
+            
+            <div class="max-w-md mx-auto scroll-fade-in animate-delay-200">
+                <div class="card p-8 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 text-battle-red text-8xl opacity-10">
+                        <i class="fas fa-helmet-battle"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-6 font-orbitron">TEAM REGISTRATION</h3>
+                    <p class="text-gray-400 mb-6">Click the button below to register your team for AlgoWars</p>
+                    <a href="https://forms.gle/Qy4NqJNYLgA1aew48" target="_blank" class="btn-primary px-8 py-4 font-bold text-lg rounded-full inline-flex items-center justify-center w-full">
+                        <i class="fas fa-fist-raised mr-3"></i>REGISTER YOUR TEAM
+                    </a>
+                    <p class="text-sm text-gray-500 mt-4">* One team member should register with all team details</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="section bg-mid-bg">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl sm:text-4xl font-extrabold text-center mb-12 scroll-fade-in font-orbitron">
+                BATTLE INTEL
+            </h2>
+            
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="card accordion-item scroll-fade-in p-6">
+                    <div class="accordion-header flex justify-between items-center" data-accordion-target="faq-1">
+                        <h3 class="text-lg sm:text-xl font-semibold font-orbitron">Who can participate in AlgoWars?</h3>
+                        <i class="fas fa-plus text-lg text-battle-red transform transition-transform duration-300"></i>
+                    </div>
+                    <div id="faq-1" class="accordion-content">
+                        <div class="pt-4 text-gray-400 leading-relaxed">
+                            <p>AlgoWars is open to all students of Chandigarh University. Teams should consist of 2-3 members from any year or discipline.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card accordion-item scroll-fade-in animate-delay-100 p-6">
+                    <div class="accordion-header flex justify-between items-center" data-accordion-target="faq-2">
+                        <h3 class="text-lg sm:text-xl font-semibold font-orbitron">Do I need to bring anything?</h3>
+                        <i class="fas fa-plus text-lg text-battle-red transform transition-transform duration-300"></i>
+                    </div>
+                    <div id="faq-2" class="accordion-content">
+                        <div class="pt-4 text-gray-400 leading-relaxed">
+                            <p><strong class="text-battle-red">Laptops are mandatory</strong> for all participants. You should also bring your student ID for verification and a notebook for brainstorming.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card accordion-item scroll-fade-in animate-delay-200 p-6">
+                    <div class="accordion-header flex justify-between items-center" data-accordion-target="faq-3">
+                        <h3 class="text-lg sm:text-xl font-semibold font-orbitron">How will the ideas be evaluated?</h3>
+                        <i class="fas fa-plus text-lg text-battle-red transform transition-transform duration-300"></i>
+                    </div>
+                    <div id="faq-3" class="accordion-content">
+                        <div class="pt-4 text-gray-400 leading-relaxed">
+                            <p>Ideas will be evaluated based on:</p>
+                            <ul class="list-disc pl-5 space-y-2 mt-2">
+                                <li>Innovation and creativity</li>
+                                <li>Feasibility and practicality</li>
+                                <li>Potential impact</li>
+                                <li>Quality of presentation (for final round)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card accordion-item scroll-fade-in animate-delay-400 p-6">
+                    <div class="accordion-header flex justify-between items-center" data-accordion-target="faq-5">
+                        <h3 class="text-lg sm:text-xl font-semibold font-orbitron">Will there be internet access?</h3>
+                        <i class="fas fa-plus text-lg text-battle-red transform transition-transform duration-300"></i>
+                    </div>
+                    <div id="faq-5" class="accordion-content">
+                        <div class="pt-4 text-gray-400 leading-relaxed">
+                            <p>Yes, internet access will be available for research and development during the ideation round.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="section bg-gradient-to-r from-battle-red/30 to-battle-orange/30 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cGF0aCBkPSJNMzAgMTVMMTUgMzBMMzAgNDVWMTVaTTQ1IDMwTDMwIDQ1SDQ1VjMwWk0zMCAxNUw0NSAzMFYxNUgzMFoiIHN0cm9rZT0iI2ZmMmEyYSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+')]"></div>
+        </div>
+        <div class="container mx-auto text-center relative z-10">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-6 scroll-fade-in font-orbitron">
+                READY FOR BATTLE?
+            </h2>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto mb-8 scroll-fade-in animate-delay-100">
+                Join AlgoWars and showcase your problem-solving skills. Register your team today!
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 scroll-fade-in animate-delay-200">
+                <a href="https://forms.gle/Qy4NqJNYLgA1aew48" target="_blank" class="btn-primary px-8 py-4 font-bold text-lg rounded-full inline-flex items-center justify-center pulse-animation">
+                    <i class="fas fa-fist-raised mr-3"></i>REGISTER NOW
+                </a>
+                <a href="#faq" class="btn-outline px-8 py-4 font-bold text-lg rounded-full inline-flex items-center justify-center">
+                    <i class="fas fa-question-circle mr-3"></i>VIEW FAQ
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="section bg-dark-bg border-t border-gray-800/50">
+        <div class="container mx-auto">
+            <div class="grid md:grid-cols-4 gap-12">
+                <!-- Column 1: About -->
+                <div class="scroll-fade-in">
+                    <h4 class="text-xl font-bold mb-4 text-gradient font-orbitron">
+                        ALGOWARS
+                    </h4>
+                    <p class="text-gray-400 mb-4">The ultimate battle of ideas presented by CSI CUSB. Empowering the next generation of innovators.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/csi.cu/" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300 text-xl hover-glow">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/computer-society-of-india-cusb-8618bb251/" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300 text-xl hover-glow">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="mailto:csi.cu@cumail.in" class="text-gray-400 hover:text-white transition-colors duration-300 text-xl hover-glow">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Column 2: Events -->
+                <div class="scroll-fade-in animate-delay-100">
+                    <h4 class="text-xl font-bold mb-4 text-gradient font-orbitron">Events</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-battle-red"></i> AlgoWars</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-battle-orange"></i> Hackathons</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-battle-yellow"></i> Workshops</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 3: Quick Links -->
+                <div class="scroll-fade-in animate-delay-200">
+                    <h4 class="text-xl font-bold mb-4 text-gradient font-orbitron">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#hero" class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center"><i class="fas fa-home mr-2 text-battle-red"></i> Home</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center"><i class="fas fa-info-circle mr-2 text-battle-orange"></i> About</a></li>
+                        <li><a href="#schedule" class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center"><i class="fas fa-calendar-alt mr-2 text-battle-yellow"></i> Schedule</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center"><i class="fas fa-question-circle mr-2 text-battle-red"></i> FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 4: Contact -->
+                <div class="scroll-fade-in animate-delay-300">
+                    <h4 class="text-xl font-bold mb-4 text-gradient font-orbitron">Contact Us</h4>
+                    <address class="not-italic text-gray-400 space-y-3">
+                        <div class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-battle-red mt-1 mr-3"></i>
+                            <span>Chandigarh University,<br>Mohali, Punjab</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope text-battle-orange mr-3"></i>
+                            <a href="mailto:csi.cu@cumail.in" class="hover:text-white transition-colors duration-300">csi.cu@cumail.in</a>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-globe text-battle-yellow mr-3"></i>
+                            <a href="https://www.csi-india.org/" target="_blank" class="hover:text-white transition-colors duration-300">CSI Main Website</a>
+                        </div>
+                    </address>
+                </div>
+            </div>
+            
+            <div class="mt-16 pt-8 border-t border-gray-800/50 text-center text-gray-500 text-sm scroll-fade-in">
+                <p>Copyright &copy; 2025 CSI Chandigarh University Student Branch. All rights reserved.</p>
+                <p class="mt-2">Made with <i class="fas fa-heart text-battle-red"></i> by Ankit Tiwari</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 bg-battle-red rounded-full shadow-lg z-50 opacity-0 invisible transition-all duration-300 flex items-center justify-center text-white hover:bg-battle-orange">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Countdown Timer
+            function updateCountdown() {
+                const eventDate = new Date('September 12, 2025 10:00:00').getTime();
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').innerHTML = '<div class="col-span-4 text-center text-xl font-semibold text-green-400 py-4">Event has started! See you there!</div>';
+                }
+            }
+            
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            // Mobile Menu Toggle
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const closeMenuBtn = document.getElementById('close-menu');
+
+            function openMenu() {
+                navMenu.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeMenu() {
+                navMenu.classList.add('translate-x-full');
+                document.body.style.overflow = '';
+            }
+            
+            navToggle.addEventListener('click', openMenu);
+            closeMenuBtn.addEventListener('click', closeMenu);
+
+            document.querySelectorAll('#nav-menu a').forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+
+            // Scroll-triggered animations
+            const scrollObservers = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.scroll-fade-in').forEach(el => {
+                scrollObservers.observe(el);
+            });
+            
+            // Header scroll effect
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // FAQ Accordion
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = document.getElementById(header.dataset.accordionTarget);
+                    const icon = header.querySelector('i');
+                    const isOpen = content.classList.contains('is-open');
+
+                    // Close all other accordions
+                    document.querySelectorAll('.accordion-content').forEach(c => {
+                        if (c !== content) {
+                            c.classList.remove('is-open');
+                            c.previousElementSibling.querySelector('i').classList.remove('rotate-45');
+                        }
+                    });
+
+                    // Toggle current accordion
+                    if (!isOpen) {
+                        content.classList.add('is-open');
+                        icon.classList.add('rotate-45');
+                    } else {
+                        content.classList.remove('is-open');
+                        icon.classList.remove('rotate-45');
+                    }
+                });
+            });
+
+            // Back to Top Button
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Hero background particle animation
+            const canvas = document.getElementById('hero-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, particles;
+
+            function resizeCanvas() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                createParticles();
+            }
+
+            function createParticles() {
+                particles = [];
+                const particleCount = Math.floor(width * height / 10000);
+                
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        size: Math.random() * 3 + 1,
+                        speedX: Math.random() * 1 - 0.5,
+                        speedY: Math.random() * 1 - 0.5,
+                        color: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 100)}, ${Math.floor(Math.random() * 100)}, ${Math.random() * 0.5 + 0.1})`
+                    });
+                }
+            }
+
+            function drawParticles() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p1 = particles[i];
+                        const p2 = particles[j];
+                        const distance = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+                        
+                        if (distance < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = `rgba(255, 42, 42, ${1 - distance / 150})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                // Draw particles
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                }
+            }
+
+            function updateParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+
+                    // Bounce off edges
+                    if (p.x > width || p.x < 0) p.speedX *= -1;
+                    if (p.y > height || p.y < 0) p.speedY *= -1;
+                }
+            }
+
+            function animate() {
+                updateParticles();
+                drawParticles();
+                requestAnimationFrame(animate);
+            }
+            
+            // Initialize
+            resizeCanvas();
+            animate();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
